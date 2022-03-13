@@ -59,6 +59,7 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
   final List ll =[1,2,3,4,5,6,7,8,9,15];
 
 
+  //这个数组是用来计算，右侧每一页要跳转到标题的高度，属于累加
   final List _rightOffSetStepList = [];
 
   //这里是对于最后一个项目后填入空白空间来保证右侧ListView可以被滑动到顶部，会在_calculation（）方法中计算实际高度
@@ -101,6 +102,7 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
 
   //计算右侧的一页高度
   void _calculation(){
+    //这个数组用来计算单独一个List的页面高度
     List rightListStep = [];
     _rightOffSetStepList.clear();
 
@@ -173,7 +175,7 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
             child: Container(
               height: leftItemHeight,
               padding: const EdgeInsets.fromLTRB(1, 0, 0, 0),
-              color: _indexLeft == index ? Colors.white : const Color.fromRGBO(249, 249, 249, 1),
+              color: _indexLeft == index ? Colors.red : const Color.fromRGBO(249, 249, 249, 1),
               child:  Text(_left[index].toString(),style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
               alignment: Alignment.center,
             ),
