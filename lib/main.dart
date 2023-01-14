@@ -23,7 +23,6 @@ const int rightWidgetFlex = 9; // 右边组件占据空间的比例
 const int rightGridViewCrossAxisCount = 3; //右侧GirdView一排数量，这里测试时为3
 
 
-
 class LinkageRollingPage extends StatefulWidget {
   final arguments;
   const LinkageRollingPage({Key? key, this.arguments}) : super(key: key);
@@ -101,27 +100,52 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
   }
 
   //计算右侧的一页高度
+  // void _calculation(){
+  //   //这个数组用来计算单独一个List的页面高度
+  //   List rightListStep = [];
+  //   _rightOffSetStepList.clear();
+  //
+  //
+  //   _rightGridItemHight = (MediaQuery.of(context).size.width - 20) * rightWidgetFlex / (leftWidgetFlex + rightWidgetFlex) / rightGridViewCrossAxisCount ;
+  //   rightListStep.add((_rightGridItemHight * ( (ll[0] ~/ rightGridViewCrossAxisCount) + (ll[0] % rightGridViewCrossAxisCount == 0 ? 0 : 1)) + rightItemTitleHeight));
+  //   for(int i =1; i<_left.length ; i++){
+  //     rightListStep.add((_rightGridItemHight * ( (ll[i] ~/ rightGridViewCrossAxisCount) + (ll[i] % rightGridViewCrossAxisCount == 0 ? 0 : 1)) + rightItemTitleHeight));
+  //   }
+  //
+  //   _lastGridHeight = (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - kBottomNavigationBarHeight) - rightListStep.last;
+  //
+  //
+  //   for(int i =0;i< rightListStep.length  ; i++){
+  //     double off = 0.0;
+  //     for(int j = 0; j < i ; j++){
+  //       off += rightListStep[j];
+  //     }
+  //     _rightOffSetStepList.add(off);
+  //   }
+  // }
+
+  //计算右侧的一页高度 - ListView版本
   void _calculation(){
     //这个数组用来计算单独一个List的页面高度
     List rightListStep = [];
     _rightOffSetStepList.clear();
 
-    //
-    _rightGridItemHight = (MediaQuery.of(context).size.width - 20) * rightWidgetFlex / (leftWidgetFlex + rightWidgetFlex) / rightGridViewCrossAxisCount ;
-    rightListStep.add((_rightGridItemHight * ( (ll[0] ~/ rightGridViewCrossAxisCount) + (ll[0] % rightGridViewCrossAxisCount == 0 ? 0 : 1)) + rightItemTitleHeight));
+
+    _rightGridItemHight = 50; // 这里设置一个ListView项目的高度
+    rightListStep.add((_rightGridItemHight * ( (ll[0]) + (ll[0] % 1 == 0 ? 0 : 1)) + rightItemTitleHeight));
     for(int i =1; i<_left.length ; i++){
-      rightListStep.add((_rightGridItemHight * ( (ll[i] ~/ rightGridViewCrossAxisCount) + (ll[i] % rightGridViewCrossAxisCount == 0 ? 0 : 1)) + rightItemTitleHeight));
+      rightListStep.add((_rightGridItemHight * ( (ll[i]) + (ll[i] % 1 == 0 ? 0 : 1)) + rightItemTitleHeight));
     }
 
     _lastGridHeight = (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - kBottomNavigationBarHeight) - rightListStep.last;
 
 
     for(int i =0;i< rightListStep.length  ; i++){
-      double _off = 0.0;
+      double off = 0.0;
       for(int j = 0; j < i ; j++){
-        _off += rightListStep[j];
+        off += rightListStep[j];
       }
-      _rightOffSetStepList.add(_off);
+      _rightOffSetStepList.add(off);
     }
   }
 
@@ -147,13 +171,13 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
         body:Row(
           children: [
             Expanded(
-              child: _left_listViewWidget(),
               flex: leftWidgetFlex,
+              child: _left_listViewWidget(),
             ),
             const SizedBox(width: 10,),
             Expanded(
-              child: _right_listViewWidget(),
               flex: rightWidgetFlex,
+              child: _right_listViewWidget(),
             ),
             const SizedBox(width: 10,),
           ],
@@ -172,17 +196,17 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
         controller: _leftListController,
         itemBuilder: (context,index){
           return GestureDetector(
-            child: Container(
-              height: leftItemHeight,
-              padding: const EdgeInsets.fromLTRB(1, 0, 0, 0),
-              color: _indexLeft == index ? Colors.red : const Color.fromRGBO(249, 249, 249, 1),
-              child:  Text(_left[index].toString(),style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
-              alignment: Alignment.center,
-            ),
             onTap: (){
               _rightListController.animateTo(_rightOffSetStepList[index], duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
             },
             behavior: HitTestBehavior.opaque,
+            child: Container(
+              height: leftItemHeight,
+              padding: const EdgeInsets.fromLTRB(1, 0, 0, 0),
+              color: _indexLeft == index ? Colors.red : const Color.fromRGBO(249, 249, 249, 1),
+              alignment: Alignment.center,
+              child:  Text(_left[index].toString(),style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+            ),
           );
         },
         itemCount: _left.length,
@@ -190,7 +214,142 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
     );
   }
 
-  //右侧项目栏
+  //右侧项目栏 - GridView版本
+  // Widget _right_listViewWidget(){
+  //   return Container(
+  //       alignment: Alignment.topCenter,
+  //       margin: const EdgeInsets.fromLTRB(0, 8, 0, 30.0),
+  //       color: Colors.white,
+  //       child : ListView.builder(
+  //         itemBuilder: (context,index){
+  //           if(_left.length > index +1 ){
+  //             return Column(
+  //               children: [
+  //                 Container(
+  //                   color: Colors.red,
+  //                   height: rightItemTitleHeight,
+  //                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+  //                   child: Row(
+  //                     children: [
+  //                       const Expanded(
+  //                         child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
+  //                       ),
+  //                       Container(
+  //                         child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
+  //                         padding: const EdgeInsets.fromLTRB(11, 0, 11, 0),
+  //                       ),
+  //                       const Expanded(
+  //                         child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 GridView.builder(
+  //                   padding: const EdgeInsets.all(0),
+  //                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                     crossAxisCount: rightGridViewCrossAxisCount, //每行三列
+  //                     childAspectRatio: 1, //显示区域宽高相等
+  //                   ),
+  //                   physics: const NeverScrollableScrollPhysics(),
+  //                   shrinkWrap: true,
+  //                   itemCount: ll[index],
+  //                   itemBuilder: (context, index) {
+  //                     return GestureDetector(
+  //                       child: Container(
+  //                         height: _rightGridItemHight,
+  //                         color: Colors.blue,
+  //                         child: Column(
+  //                           mainAxisAlignment: MainAxisAlignment.center,
+  //                           children: [
+  //                             Container(
+  //                               child:const Icon(Icons.print),
+  //                               padding:const EdgeInsets.fromLTRB(0, 0, 0, 10),
+  //                             ),
+  //                             Text("测试" + index.toString()),
+  //                           ],
+  //                         ),
+  //                         padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
+  //                         margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+  //                       ),
+  //                       behavior: HitTestBehavior.opaque,
+  //                       onTap: (){
+  //
+  //                       },
+  //                     );
+  //                   },
+  //                 ),
+  //               ],
+  //             );
+  //           }else{
+  //
+  //             //最后一项特别处理，需要使用SizedBox
+  //             return Column(
+  //               children: [
+  //                 Container(
+  //                   color: Colors.red,
+  //                   height: rightItemTitleHeight,
+  //                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+  //                   child: Row(
+  //                     children: [
+  //                       const Expanded(
+  //                         child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
+  //                       ),
+  //                       Container(
+  //                         child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
+  //                         padding: const EdgeInsets.fromLTRB(11, 0, 11, 0),
+  //                       ),
+  //                       const Expanded(
+  //                         child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 GridView.builder(
+  //                   padding: const EdgeInsets.all(0),
+  //                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                     crossAxisCount: 3, //每行三列
+  //                     childAspectRatio: 1, //显示区域宽高相等
+  //                   ),
+  //                   physics: const NeverScrollableScrollPhysics(),
+  //                   shrinkWrap: true,
+  //                   itemCount: ll[index],
+  //                   itemBuilder: (context, index) {
+  //                     return GestureDetector(
+  //                       child: Container(
+  //                         height: _rightGridItemHight,
+  //                         color: Colors.amber,
+  //                         child: Column(
+  //                           mainAxisAlignment: MainAxisAlignment.center,
+  //                           children: [
+  //                             Container(
+  //                               child:const Icon(Icons.print),
+  //                               padding:const EdgeInsets.fromLTRB(0, 0, 0, 10),
+  //                             ),
+  //                             Text("测试" + index.toString()),
+  //                           ],
+  //                         ),
+  //                         padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
+  //                         margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+  //                       ),
+  //                       behavior: HitTestBehavior.opaque,
+  //                       onTap: (){
+  //
+  //                       },
+  //                     );
+  //                   },
+  //                 ),
+  //                 SizedBox(height: _lastGridHeight,),
+  //               ],
+  //             );
+  //           }
+  //         },
+  //         itemCount: _left.length,
+  //         controller: _rightListController,
+  //       )
+  //   );
+  // }
+
+  //右侧项目栏 - ListView 版本
   Widget _right_listViewWidget(){
     return Container(
         alignment: Alignment.topCenter,
@@ -211,8 +370,8 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
                           child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
                         ),
                         Container(
-                          child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
                           padding: const EdgeInsets.fromLTRB(11, 0, 11, 0),
+                          child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
                         ),
                         const Expanded(
                           child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
@@ -220,37 +379,33 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
                       ],
                     ),
                   ),
-                  GridView.builder(
+                  ListView.builder(
                     padding: const EdgeInsets.all(0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: rightGridViewCrossAxisCount, //每行三列
-                      childAspectRatio: 1, //显示区域宽高相等
-                    ),
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: ll[index],
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        child: Container(
-                          height: _rightGridItemHight,
-                          color: Colors.blue,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                child:const Icon(Icons.print),
-                                padding:const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              ),
-                              Text("测试" + index.toString()),
-                            ],
-                          ),
-                          padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
-                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        ),
                         behavior: HitTestBehavior.opaque,
                         onTap: (){
 
                         },
+                        child: Container(
+                          height: _rightGridItemHight,
+                          color: Colors.blue,
+                          padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
+                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Container(
+                              //   padding:const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              //   child:const Icon(Icons.print),
+                              // ),
+                              Text("测试$index"),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -271,8 +426,8 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
                           child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
                         ),
                         Container(
-                          child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
                           padding: const EdgeInsets.fromLTRB(11, 0, 11, 0),
+                          child: Text(_left[index],style: const TextStyle(fontSize: 13,color: Color.fromRGBO(51, 51, 51, 1)),),
                         ),
                         const Expanded(
                           child: Divider(color: Color.fromRGBO(216, 216, 216, 1),height: 1,),
@@ -280,37 +435,29 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
                       ],
                     ),
                   ),
-                  GridView.builder(
+                  ListView.builder(
                     padding: const EdgeInsets.all(0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, //每行三列
-                      childAspectRatio: 1, //显示区域宽高相等
-                    ),
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: ll[index],
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        child: Container(
-                          height: _rightGridItemHight,
-                          color: Colors.amber,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                child:const Icon(Icons.print),
-                                padding:const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              ),
-                              Text("测试" + index.toString()),
-                            ],
-                          ),
-                          padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
-                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        ),
                         behavior: HitTestBehavior.opaque,
                         onTap: (){
 
                         },
+                        child: Container(
+                          height: _rightGridItemHight,
+                          color: Colors.amber,
+                          padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
+                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("测试$index"),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -324,6 +471,4 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
         )
     );
   }
-
-
 }
