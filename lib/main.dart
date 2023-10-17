@@ -113,7 +113,9 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
   //   }
   //
   //   _lastGridHeight = (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - kBottomNavigationBarHeight) - rightListStep.last;
-  //
+  //   if(_lastGridHeight < 0){
+  //     _lastGridHeight = 20; //避免负数造成报错，这个固定值可以随项目需要改
+  //   }
   //
   //   for(int i =0;i< rightListStep.length  ; i++){
   //     double off = 0.0;
@@ -138,7 +140,9 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
     }
 
     _lastGridHeight = (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - kBottomNavigationBarHeight) - rightListStep.last;
-
+    if(_lastGridHeight < 0){
+      _lastGridHeight = 20; //避免负数造成报错，这个固定值可以随项目需要改
+    }
 
     for(int i =0;i< rightListStep.length  ; i++){
       double off = 0.0;
@@ -468,7 +472,7 @@ class _LinkageRollingPageState extends State<LinkageRollingPage> {
           },
           itemCount: _left.length,
           controller: _rightListController,
-        )
+        ),
     );
   }
 }
